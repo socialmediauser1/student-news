@@ -1,8 +1,8 @@
 # Student News Demo
-n> Fork for SDT 316 Homework 10 (Antonii Maltsev).
+> Fork for SDT 316 Homework 10 (Antonii Maltsev).
 
-[![CI](https://github.com/rtym/student-news/actions/workflows/ci.yml/badge.svg)](https://github.com/rtym/student-news/actions/workflows/ci.yml)
-[![E2E (Playwright)](https://github.com/rtym/student-news/actions/workflows/e2e.yml/badge.svg)](https://github.com/rtym/student-news/actions/workflows/e2e.yml)
+[![CI](https://github.com/socialmediauser1/student-news/actions/workflows/ci.yml/badge.svg)](https://github.com/socialmediauser1/student-news/actions/workflows/ci.yml)
+[![E2E (Playwright)](https://github.com/socialmediauser1/student-news/actions/workflows/e2e.yml/badge.svg)](https://github.com/socialmediauser1/student-news/actions/workflows/e2e.yml)
 
 Demo application for managing student news without authentication.
 
