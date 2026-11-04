@@ -1,10 +1,19 @@
 name: E2E (Playwright)
 
+# Documentation cannot break the running application, so a commit that only
+# touches Markdown or docs/ does not spend ~10 runner minutes on Playwright.
+# CI still runs on those commits; only this workflow is skipped.
 on:
   push:
     branches: [main, master]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   pull_request:
     branches: [main, master]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
 
 jobs:
   playwright:
