@@ -20,6 +20,7 @@ public class NewsService {
         this.newsRepository = newsRepository;
     }
 
+    /** Lists news, newest change first; filters by status when one is given. */
     public List<NewsResponse> list(NewsStatus status) {
         List<NewsItem> items = status == null
                 ? newsRepository.findAll()
