@@ -1,0 +1,17 @@
+# Only pom.xml and src/ belong in the build context.
+# Build output: the JAR is rebuilt inside the image.
+target/
+# Local uploads from running the service outside Docker.
+data/
+# IDE and OS files.
+.idea/
+.vscode/
+*.iml
+.DS_Store
+# Logs.
+logs/
+*.log
+# Version control and local secrets.
+.git
+.env
+.env.*

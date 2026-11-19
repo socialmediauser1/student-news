@@ -52,5 +52,29 @@ services:
       # The UI stays at http://localhost:5173; nginx inside listens on 8080.
       - "5173:8080"
 
+  avatar-service:
+    build:
+      context: ./avatar-service
+    container_name: student-news-avatar-service
+    environment:
+      PORT: "8090"
+      UPLOAD_DIR: /data/avatars
+      MAX_BYTES: "2097152"   # 2 MiB
+    ports:
+      # The browser calls the service, not the frontend container, so the
+      # port must be published on the host: http://localhost:8090.
+      - "8090:8090"
+    volumes:
+      # Named volume: the pictures survive `docker compose down` and rebuilds.
+      - avatar_data:/data/avatars
+    healthcheck:
+      # The image has no curl; BusyBox wget exits non-zero on a 503.
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8090/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
+
 volumes:
   postgres_data:
+  avatar_data:
