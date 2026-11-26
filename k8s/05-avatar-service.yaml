@@ -1,0 +1,69 @@
+# avatar-service (Spring Boot, stores the news pictures): the pod
+# (Deployment) and a stable name in front of it (Service).
+#
+# No ConfigMap, probes or volume yet. The service reads its settings from
+# environment variables with defaults (port 8090, upload dir /data/avatars),
+# and the defaults are what we want here. Configuration, storage and health
+# checks are Homework 14.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avatar-service
+  namespace: student-news
+  labels:
+    app: avatar-service
+spec:
+  # One pod only. The pictures are files inside the container
+  # (/data/avatars), not in a shared store, so a second pod would have its
+  # own, different set of files and a picture uploaded to one pod would be
+  # missing when the Service sends the next request to the other.
+  replicas: 1
+  # The Deployment manages every pod with this label. It must match the
+  # labels of the template below, or the API server rejects the Deployment.
+  selector:
+    matchLabels:
+      app: avatar-service
+  # The blueprint for each pod the Deployment (through its ReplicaSet)
+  # creates.
+  template:
+    metadata:
+      labels:
+        app: avatar-service
+    spec:
+      containers:
+        - name: avatar-service
+          # An explicit version, never :latest. The image only exists
+          # locally (built with docker, copied in with `minikube image load`),
+          # and for :latest Kubernetes would try to pull it from Docker Hub.
+          image: avatar-service:1.0
+          # Use the image already on the node; pull only when it is missing.
+          imagePullPolicy: IfNotPresent
+          ports:
+            # server.port in application.properties (EXPOSE 8090 in the
+            # Dockerfile). Documents the port; the Service targets it.
+            - containerPort: 8090
+          # The image already runs as the `app` user (USER 10001:10001 in
+          # avatar-service/Dockerfile). Stating it here makes Kubernetes
+          # enforce it: the kubelet refuses to start the container as root.
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            allowPrivilegeEscalation: false
+---
+# One stable name, `avatar-service`, in front of the pod. It is reachable only
+# inside the cluster (ClusterIP); the browser reaches it through
+# `kubectl port-forward -n student-news service/avatar-service 8090:8090`.
+apiVersion: v1
+kind: Service
+metadata:
+  name: avatar-service
+  namespace: student-news
+spec:
+  type: ClusterIP
+  # Send traffic to the pods with this label: the ones the Deployment makes.
+  selector:
+    app: avatar-service
+  ports:
+    - port: 8090        # the port of the Service itself
+      targetPort: 8090  # the containerPort above
